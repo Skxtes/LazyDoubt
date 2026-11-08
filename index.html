@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LazyDoubt</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #000; color: #fff; font-family: 'Inter', sans-serif; min-height: 100vh; }
+.hidden { display: none !important; }
+
+/* HOME */
+.home { min-height: 100vh; padding: 65px 25px; }
+.logo { text-align: center; font-family: 'Bungee', sans-serif; font-size: clamp(38px, 7vw, 76px); letter-spacing: -3px; margin-bottom: 12px; }
+.logo span { color: #a20e19; }
+.logo small { color: #fff; font-size: inherit; }
+.subtitle { text-align: center; color: #777; font-size: 13px; letter-spacing: 4px; margin-bottom: 75px; text-transform: uppercase; }
+
+.tools-grid { max-width: 1100px; margin: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.tool-card { min-height: 235px; background: #0b0b0b; border: 1px solid #222; padding: 30px; cursor: pointer; transition: .25s; display: flex; flex-direction: column; justify-content: space-between; }
+.tool-card:hover { border-color: #a20e19; background: #111; transform: translateY(-5px); }
+.tool-icon { width: 100%; height: 150px; margin-bottom: 20px; border-radius: 8px; overflow: hidden; background: #050505; }
+.tool-icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tool-card h2 { font-size: 17px; font-weight: 800; margin-bottom: 12px; }
+.tool-card p { color: #777; font-size: 12px; line-height: 1.7; }
+.card-arrow { color: #a20e19; font-size: 23px; text-align: right; }
+
+/* APP */
+.app { min-height: 100vh; display: flex; }
+.sidebar { width: 250px; min-width: 250px; min-height: 100vh; background: #080808; border-right: 1px solid #222; padding: 30px 18px; display: flex; flex-direction: column; }
+.sidebar-logo { font-family: 'Bungee', sans-serif; font-size: 23px; margin-bottom: 55px; padding-left: 10px; cursor: pointer; }
+.sidebar-logo span { color: #a20e19; }
+.nav-item { padding: 15px 12px; margin-bottom: 7px; font-size: 12px; color: #888; cursor: pointer; transition: .2s; border-left: 2px solid transparent; }
+.nav-item:hover, .nav-item.active { background: #151515; color: #fff; border-left-color: #a20e19; }
+.main { flex: 1; min-width: 0; padding: 45px; }
+.topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 55px; }
+.page-name { font-size: 22px; font-weight: 800; }
+
+/* CONTENT */
+.tool-container { max-width: 850px; margin: 0 auto; }
+.tool-heading { margin-bottom: 35px; }
+.tool-heading h1 { font-size: 27px; margin-bottom: 10px; }
+.panel { background: #0b0b0b; border: 1px solid #222; padding: 25px; margin-bottom: 20px; }
+.panel-title { font-size: 12px; font-weight: 700; margin-bottom: 18px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+.input { width: 100%; background: #050505; border: 1px solid #292929; padding: 15px; color: #fff; outline: none; font-size: 13px; }
+.input:focus { border-color: #a20e19; }
+.primary-btn { border: none; background: #a20e19; color: #fff; padding: 15px 25px; font-size: 12px; font-weight: 800; cursor: pointer; }
+.primary-btn:hover { background: #c01826; }
+.gradient-btn { background: linear-gradient(100deg, #a20e19, #e34b22); border: none; color: #fff; padding: 14px 30px; font-size: 12px; font-weight: 800; cursor: pointer; }
+.input-row { display: flex; gap: 10px; }
+.chat-row { display: flex; gap: 10px; }
+.upload-area { border: 1px dashed #444; background: #080808; min-height: 160px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 12px; cursor: pointer; color: #888; font-size: 12px; transition: .2s; }
+.upload-area:hover { border-color: #a20e19; }
+.upload-area input { display: none; }
+.upload-area strong { color: #fff; }
+.converter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+.code-box textarea { width: 100%; height: 300px; background: #050505; color: #ddd; border: 1px solid #292929; padding: 15px; resize: vertical; outline: none; font-family: monospace; font-size: 12px; }
+.convert-bottom { margin-top: 20px; display: flex; justify-content: space-between; align-items: center; }
+.copy-btn { background: #222; color: #aaa; border: 1px solid #444; padding: 8px 12px; font-size: 11px; cursor: pointer; }
+.loading { display: flex; gap: 10px; align-items: center; color: #888; font-size: 11px; margin-top: 20px; }
+.spinner { width: 15px; height: 15px; border: 2px solid #444; border-top-color: #a20e19; border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.error-text { color: #ff616c; margin-top: 14px; font-size: 10px; }
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<section class="home" id="home">
+    <div class="logo"><span>Lazy</span><small>Doubt</small></div>
+    <div class="subtitle">Your tools. One place.</div>
+    <div class="tools-grid">
+        <div class="tool-card" onclick="openTool('youtube')">
+            <div>
+                <div class="tool-icon"><img src="images/thumbnail.jpg" alt="Youtube"></div>
+                <h2>Youtube Thumbnail Downloader</h2>
+                <p>Extract and download thumbnails from any YouTube video.</p>
+            </div>
+            <div class="card-arrow">↗</div>
+        </div>
+        <div class="tool-card" onclick="openTool('image')">
+            <div>
+                <div class="tool-icon"><img src="images/ai.jpg" alt="AI"></div>
+                <h2>Image Editor AI</h2>
+                <p>Upload an image and change it using artificial intelligence.</p>
+            </div>
+            <div class="card-arrow">↗</div>
+        </div>
+        <div class="tool-card" onclick="openTool('code')">
+            <div>
+                <div class="tool-icon"><img src="images/convert.jpg" alt="Code"></div>
+                <h2>Code Converter</h2>
+                <p>Convert your code into another programming language.</p>
+            </div>
+            <div class="card-arrow">↗</div>
+        </div>
+    </div>
+</section>
+
+<!-- APP -->
+<section class="app hidden" id="app">
+    <aside class="sidebar">
+        <div class="sidebar-logo" onclick="goHome()"><span>Lazy</span>Doubt</div>
+        <div class="nav-item" id="nav-youtube" onclick="openTool('youtube')">▶ Youtube Downloader</div>
+        <div class="nav-item" id="nav-image" onclick="openTool('image')">✧ Image Editor AI</div>
+        <div class="nav-item" id="nav-code" onclick="openTool('code')">&lt;/&gt; Code Converter</div>
+    </aside>
+    <main class="main">
+        <div class="topbar"><div class="page-name" id="pageName">Dashboard</div></div>
+
+        <!-- YOUTUBE -->
+        <div class="tool-container hidden" id="youtubeTool">
+            <div class="tool-heading"><h1>Youtube Thumbnail Downloader</h1></div>
+            <div class="panel">
+                <div class="input-row">
+                    <input class="input" id="youtubeUrl" placeholder="Paste URL here">
+                    <button class="primary-btn" onclick="getThumbnail()">View</button>
+                </div>
+                <div class="loading hidden" id="youtubeLoading"><div class="spinner"></div><span>Processing...</span></div>
+                <div id="thumbnailResult" class="hidden" style="margin-top:20px">
+                    <img id="thumbnailImage" style="max-width:100%; border-radius:8px;">
+                    <div style="margin-top:15px; display:flex; gap:10px;">
+                        <input class="input" id="fileName" value="thumbnail">
+                        <button class="primary-btn" onclick="downloadThumbnail()">Download PNG</button>
+                    </div>
+                </div>
+                <p class="error-text" id="youtubeError"></p>
+            </div>
+        </div>
+
+        <!-- IMAGE EDITOR -->
+        <div class="tool-container hidden" id="imageTool">
+            <div class="tool-heading"><h1>Image Editor AI</h1></div>
+            <div class="panel">
+                <label class="upload-area" for="imageUpload">
+                    <span style="font-size:30px">↑</span>
+                    <strong>Click to upload an image</strong>
+                    <span>PNG, JPG or WEBP</span>
+                    <input type="file" id="imageUpload" accept="image/*">
+                </label>
+                <div id="imagePreview" class="hidden" style="margin-top:20px; text-align:center;">
+                    <img id="uploadedImage" style="max-width:100%; max-height:300px; border-radius:8px;">
+                </div>
+            </div>
+            <div class="panel">
+                <div class="chat-row">
+                    <input class="input" id="imagePrompt" placeholder="Type here what u want to change">
+                    <button class="primary-btn" onclick="editImage()">Send ↗</button>
+                </div>
+                <div class="loading hidden" id="imageLoading"><div class="spinner"></div><span>Processing image...</span></div>
+                <div id="imageResult" class="hidden" style="margin-top:20px;">
+                    <img id="editedImage" style="max-width:100%; border-radius:8px;">
+                    <button class="primary-btn" style="margin-top:15px;" onclick="downloadEditedImage()">Downloaden</button>
+                </div>
+                <p class="error-text" id="imageError"></p>
+            </div>
+            <div class="panel">
+                <div class="panel-title">Hugging Face API token</div>
+                <input class="input" type="password" id="hfToken" placeholder="Enter your Hugging Face access token">
+            </div>
+        </div>
+
+        <!-- CODE CONVERTER -->
+        <div class="tool-container hidden" id="codeTool">
+            <div class="tool-heading"><h1>Code Converter</h1></div>
+            <div class="panel">
+                <div class="converter-grid">
+                    <div class="code-box">
+                        <label style="font-size:11px; color:#888;">FROM</label>
+                        <select class="input" id="fromLanguage" style="margin-bottom:10px;">
+                            <option value="HTML">HTML</option>
+                            <option value="Python">Python</option>
+                            <option value="Go">Go</option>
+                        </select>
+                        <textarea id="inputCode" placeholder="Paste your code here..."></textarea>
+                    </div>
+                    <div class="code-box">
+                        <label style="font-size:11px; color:#888;">TO</label>
+                        <select class="input" id="toLanguage" style="margin-bottom:10px;">
+                            <option value="HTML">HTML</option>
+                            <option value="Python">Python</option>
+                            <option value="Go" selected>Go</option>
+                        </select>
+                        <textarea id="outputCode" readonly placeholder="Converted code..."></textarea>
+                        <button class="copy-btn" onclick="copyCode()">Copy</button>
+                    </div>
+                </div>
+                <div class="convert-bottom">
+                    <button class="gradient-btn" onclick="convertCode()">Convert →</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</section>
+
+<script>
+const HF_API_KEY = "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";
+
+function goHome() {
+    document.getElementById("home").classList.remove("hidden");
+    document.getElementById("app").classList.add("hidden");
+}
+
+function openTool(name) {
+    document.getElementById("home").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+    document.querySelectorAll(".tool-container").forEach(el => el.classList.add("hidden"));
+    document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
+    document.getElementById(name + "Tool").classList.remove("hidden");
+    document.getElementById("nav-" + name).classList.add("active");
+    document.getElementById("pageName").textContent = name;
+}
+
+// YouTube
+function getThumbnail() {
+    const url = document.getElementById("youtubeUrl").value.trim();
+    const match = url.match(/(?:youtu\.be\/|v=)([a-zA-Z0-9_-]{11})/);
+    if (!match) { document.getElementById("youtubeError").textContent = "Invalid YouTube URL"; return; }
+    const imgUrl = `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg`;
+    document.getElementById("youtubeLoading").classList.remove("hidden");
+    document.getElementById("thumbnailImage").src = imgUrl;
+    document.getElementById("thumbnailImage").onload = () => {
+        document.getElementById("youtubeLoading").classList.add("hidden");
+        document.getElementById("thumbnailResult").classList.remove("hidden");
+    };
+    document.getElementById("thumbnailImage").onerror = () => {
+        document.getElementById("youtubeLoading").classList.add("hidden");
+        document.getElementById("youtubeError").textContent = "Could not load thumbnail";
+    };
+}
+
+async function downloadThumbnail() {
+    const url = document.getElementById("thumbnailImage").src;
+    const name = document.getElementById("fileName").value || "thumbnail";
+    const a = document.createElement("a");
+    a.href = url; a.download = name + ".png"; a.click();
+}
+
+// Image Editor
+let uploadedFile = null;
+let editedBlob = null;
+
+document.getElementById("imageUpload").addEventListener("change", function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    uploadedFile = file;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+        document.getElementById("uploadedImage").src = ev.target.result;
+        document.getElementById("imagePreview").classList.remove("hidden");
+        document.getElementById("imageResult").classList.add("hidden");
+    };
+    reader.readAsDataURL(file);
+});
+
+async function editImage() {
+    const prompt = document.getElementById("imagePrompt").value.trim();
+    if (!uploadedFile || !prompt) { document.getElementById("imageError").textContent = "Upload image and enter prompt"; return; }
+    const token = document.getElementById("hfToken").value.trim() || HF_API_KEY;
+    document.getElementById("imageLoading").classList.remove("hidden");
+    document.getElementById("imageError").textContent = "";
+    try {
+        const base64 = await fileToBase64(uploadedFile);
+        const response = await fetch("https://api-inference.huggingface.co/models/timbrooks/instruct-pix2pix", {
+            method: "POST",
+            headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" },
+            body: JSON.stringify({ inputs: { image: base64.split(",")[1], prompt: prompt } })
+        });
+        if (!response.ok) throw new Error("API error");
+        const blob = await response.blob();
+        editedBlob = blob;
+        document.getElementById("editedImage").src = URL.createObjectURL(blob);
+        document.getElementById("imageResult").classList.remove("hidden");
+    } catch (err) {
+        document.getElementById("imageError").textContent = "AI unavailable: " + err.message;
+    } finally {
+        document.getElementById("imageLoading").classList.add("hidden");
+    }
+}
+
+function fileToBase64(file) {
+    return new Promise((res, rej) => {
+        const r = new FileReader();
+        r.onload = () => res(r.result);
+        r.onerror = () => rej(new Error("Read failed"));
+        r.readAsDataURL(file);
+    });
+}
+
+function downloadEditedImage() {
+    if (!editedBlob) return;
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(editedBlob);
+    a.download = "lazydoubt-edited.png";
+    a.click();
+}
+
+// Code Converter
+function convertCode() {
+    const input = document.getElementById("inputCode").value;
+    const from = document.getElementById("fromLanguage").value;
+    const to = document.getElementById("toLanguage").value;
+    if (!input.trim()) return;
+    let output = "";
+    if (from === "HTML" && to === "Python") {
+        output = `from flask import Flask, render_template_string\n\napp = Flask(__name__)\nHTML = """${input.replace(/"""/g, '\\"\\"\\"')}"""\n\n@app.route("/")\ndef home():\n    return render_template_string(HTML)\n\nif __name__ == "__main__":\n    app.run(debug=True)`;
+    } else if (from === "HTML" && to === "Go") {
+        output = `package main\n\nimport (\n    "net/http"\n)\n\nconst html = \`${input.replace(/`/g, '` + "`" + `')}\`\n\nfunc main() {\n    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {\n        w.Write([]byte(html))\n    })\n    http.ListenAndServe(":8080", nil)\n}`;
+    } else {
+        output = `// Conversion from ${from} to ${to} not supported yet.`;
+    }
+    document.getElementById("outputCode").value = output;
+}
+
+function copyCode() {
+    const output = document.getElementById("outputCode");
+    output.select();
+    document.execCommand("copy");
+    alert("Copied!");
+}
+</script>
+</body>
+</html>
